@@ -1,30 +1,37 @@
-# Acesse https://aka.ms/customizecontainer para saber como personalizar seu contêiner de depuração e como o Visual Studio usa este Dockerfile para criar suas imagens para uma depuração mais rápida.
-
-# Esta fase é usada durante a execução no VS no modo rápido (Padrão para a configuração de Depuração)
+# Fase base: Usada para o ambiente de produção
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-
-# Esta fase é usada para compilar o projeto de serviço
+# Fase de build: Usada para compilar o projeto
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
+# Copiar o arquivo .csproj para o diretório correto
 COPY ["WebApiCoffeeShop/WebApiCoffeeShop.csproj", "WebApiCoffeeShop/"]
-RUN dotnet restore "./WebApiCoffeeShop/WebApiCoffeeShop.csproj"
+
+# Restaurar dependências do projeto
+RUN dotnet restore "WebApiCoffeeShop/WebApiCoffeeShop.csproj"
+
+# Copiar o restante do código-fonte
 COPY . .
+
+# Construir o projeto
 WORKDIR "/src/WebApiCoffeeShop"
-RUN dotnet build "./WebApiCoffeeShop.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "WebApiCoffeeShop.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# Esta fase é usada para publicar o projeto de serviço a ser copiado para a fase final
+# Fase de publicação: Usada para preparar o aplicativo para produção
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./WebApiCoffeeShop.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "WebApiCoffeeShop.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# Esta fase é usada na produção ou quando executada no VS no modo normal (padrão quando não está usando a configuração de Depuração)
+# Fase final: Usada para rodar a aplicação
 FROM base AS final
 WORKDIR /app
+
+# Copiar os arquivos publicados da fase anterior
 COPY --from=publish /app/publish .
+
+# Definir o ponto de entrada para a aplicação
 ENTRYPOINT ["dotnet", "WebApiCoffeeShop.dll"]
