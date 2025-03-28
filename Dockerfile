@@ -9,22 +9,22 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Copiar o arquivo .csproj para o diretório correto
-COPY ["WebApiCoffeeShop/WebApiCoffeeShop.csproj", "WebApiCoffeeShop/"]
+# Verifique se o caminho está correto para o arquivo .csproj
+COPY WebApiCoffeeShop/WebApiCoffeeShop.csproj WebApiCoffeeShop/
 
 # Restaurar dependências do projeto
-RUN dotnet restore "WebApiCoffeeShop/WebApiCoffeeShop.csproj"
+RUN dotnet restore WebApiCoffeeShop/WebApiCoffeeShop.csproj
 
 # Copiar o restante do código-fonte
 COPY . .
 
 # Construir o projeto
-WORKDIR "/src/WebApiCoffeeShop"
-RUN dotnet build "WebApiCoffeeShop.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR /src/WebApiCoffeeShop
+RUN dotnet build WebApiCoffeeShop.csproj -c $BUILD_CONFIGURATION -o /app/build
 
 # Fase de publicação: Usada para preparar o aplicativo para produção
 FROM build AS publish
-RUN dotnet publish "WebApiCoffeeShop.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish WebApiCoffeeShop.csproj -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Fase final: Usada para rodar a aplicação
 FROM base AS final
