@@ -170,3 +170,4 @@ C:\Users\Diogo\Desktop\ApiCoffeeShop\WebApiCoffeeShop\WebApiCoffeeShop\obj\Debug
 C:\Users\Diogo\Desktop\ApiCoffeeShop\WebApiCoffeeShop\WebApiCoffeeShop\obj\Debug\net8.0\WebApiCoffeeShop.pdb
 C:\Users\Diogo\Desktop\ApiCoffeeShop\WebApiCoffeeShop\WebApiCoffeeShop\obj\Debug\net8.0\WebApiCoffeeShop.genruntimeconfig.cache
 C:\Users\Diogo\Desktop\ApiCoffeeShop\WebApiCoffeeShop\WebApiCoffeeShop\obj\Debug\net8.0\ref\WebApiCoffeeShop.dll
+C:\Users\Diogo\Desktop\ApiCoffeeShop\WebApiCoffeeShop\WebApiCoffeeShop\obj\Debug\net8.0\WebApiCoffeeShop.sourcelink.json
